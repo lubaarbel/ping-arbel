@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">ping-arbel</string>
+    <string name="firebase_fcm_server_key">AAAAEKbobiI:APA91bGzyTBBP8fKZHsgJ_Afz3OLC_j1C63VpDHCZN8Vg-3xo0TitYK37ex4vYpFiIZ0JAaTRi1e9EsCXYosHJdPiF37PQiXGb9i6deFCbL9LtLtJdHhmCEYO4IE7tLhCRD3QCgw_ONg</string>
+    <string name="default_notification_channel_id">CHANNEL_ID_USER_INPUT</string>
+
+    <string name="frag_user_input_edit_text">Enter your text here</string>
+    <string name="frag_user_input_enter">Send</string>
+</resources>

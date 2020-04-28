@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "71519727138",
+    "firebase_url": "https://ping-arbel.firebaseio.com",
+    "project_id": "ping-arbel",
+    "storage_bucket": "ping-arbel.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:71519727138:android:fc1a9b32af44a07ab7247b",
+        "android_client_info": {
+          "package_name": "com.lubaarbel.pingarbel"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "71519727138-65socnucv3afpe1qioturi2ia8baf6sg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lubaarbel.pingarbel",
+            "certificate_hash": "15323a02d44a96f964ca2bae0463a9db4db73203"
+          }
+        },
+        {
+          "client_id": "71519727138-opf6ffccucdllm9ukdk94bklp3mq1ena.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMxviHE7rvuW5mSBI0bueR0sKBQZ1b_Dg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "71519727138-opf6ffccucdllm9ukdk94bklp3mq1ena.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
