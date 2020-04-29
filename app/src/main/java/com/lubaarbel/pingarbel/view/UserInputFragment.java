@@ -15,13 +15,6 @@ import com.lubaarbel.pingarbel.R;
 import com.lubaarbel.pingarbel.databinding.FragmentUserInputBinding;
 import com.lubaarbel.pingarbel.viewmodel.UserInputViewModel;
 
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SignatureException;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 
 public class UserInputFragment extends BaseFragment {
     public static final String TAG = UserInputFragment.class.getSimpleName();
@@ -29,17 +22,9 @@ public class UserInputFragment extends BaseFragment {
     private FragmentUserInputBinding binding;
     private UserInputViewModel viewModel;
 
-    private Observer<String> userInputObserver = new Observer<String>() {
-        @Override
-        public void onChanged(String text) {
+    private Observer<String> userInputObserver = text -> {
             dismissKeyboard();
-            try {
-                viewModel.handleUserInput(text);
-            } catch (NoSuchAlgorithmException | IllegalBlockSizeException | InvalidKeyException |
-                    BadPaddingException | NoSuchPaddingException | SignatureException e) {
-                e.printStackTrace();
-            }
-        }
+            viewModel.handleUserInput(text);
     };
 
     public static UserInputFragment newInstance() {

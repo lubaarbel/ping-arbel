@@ -21,6 +21,6 @@ public class AppLifecycleListener implements LifecycleObserver {
         Log.i(TAG, "app onMoveToBackground");
 
         NotificationSender sender = new NotificationSender();
-        sender.sendNotificationWithDelay(15);
+        sender.sendNotificationWithDelayIfNeeded(15);
     }
 }

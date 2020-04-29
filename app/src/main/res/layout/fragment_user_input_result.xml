@@ -2,8 +2,11 @@
 <layout>
     <data>
         <variable
-            name="nothingYet"
-            type="String" />
+            name="model"
+            type="com.lubaarbel.pingarbel.model.ResultsModel" />
+        <variable
+            name="vm"
+            type="com.lubaarbel.pingarbel.viewmodel.UserInputViewModel" />
         <variable
             name="action"
             type="com.lubaarbel.pingarbel.action.IUserInputResult" />
@@ -26,13 +29,13 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Deciphered user input"
-            android:text="@{nothingYet}"
+            android:text="@{model.getResultViewText()}"
             />
         <Button
             android:id="@+id/fragment_user_input_result_re_auth"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="Re-Authenticate"
+            android:text="@string/frag_user_input_result_re_auth"
             android:background="@color/colorPrimaryDark"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
@@ -41,7 +44,8 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/fragment_user_input_result_text"
             android:onClick="@{(view) -> action.onUserClickedReAuth(view)}"
-            android:visibility="@{}"
+            android:visibility="@{model.isAuthBtnVisible()}"
+            tools:visibility="gone"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

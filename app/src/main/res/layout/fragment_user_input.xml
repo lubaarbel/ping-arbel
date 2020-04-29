@@ -21,8 +21,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:inputType="text"
+            android:scrollbarAlwaysDrawVerticalTrack="true"
+            android:inputType="textMultiLine"
             android:textStyle="italic"
             android:hint="@string/frag_user_input_edit_text"
             />
@@ -37,10 +37,23 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:onClick="@{(view) -> userInput.onUserEnteredInput(view, fragUserInputEditText.getText().toString())}"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="20dp"
             app:layout_constraintTop_toBottomOf="@id/frag_user_input_edit_text"
+            />
+
+        <TextView
+            android:id="@+id/frag_user_input_updates"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Encrypting...\nSigning...\nReady for upload..."
+            android:textSize="16sp"
+            android:textStyle="italic"
+            android:lineSpacingExtra="10dp"
+            android:textColor="@color/colorPrimaryDark"
+            android:layout_marginTop="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/frag_user_input_button"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

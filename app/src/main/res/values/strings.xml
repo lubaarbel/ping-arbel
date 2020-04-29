@@ -4,5 +4,8 @@
     <string name="default_notification_channel_id">CHANNEL_ID_USER_INPUT</string>
 
     <string name="frag_user_input_edit_text">Enter your text here</string>
-    <string name="frag_user_input_enter">Send</string>
+    <string name="frag_user_input_enter">Encrypt</string>
+
+    <string name="frag_user_input_result_re_auth">Re-authenticate</string>
+    <string name="frag_user_input_result_text_initial">Nothing to show yet…</string>
 </resources>

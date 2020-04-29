@@ -32,11 +32,12 @@ public class FcmWorker extends Worker {
     private void sendNotificationRequestToFirebase() {
         FirebaseNotificationSendingService sendingService = new FirebaseNotificationSendingService();
         sendingService.sendPushNotificationWithDataViaFirebase(
-                UserInputModel.getInstance().getUserInputEncryptedLd(),
+                UserInputModel.getInstance().getUserInputEncrypted(),
                 new Callback<FirebaseNotificationResponse>() {
                     @Override
                     public void onResponse(Call<FirebaseNotificationResponse> call, Response<FirebaseNotificationResponse> response) {
                         Log.i(TAG, "FirebaseNotification onResponse:: " + response.code());
+                        UserInputModel.getInstance().serUserInputEncrypted(null);
                     }
 
                     @Override

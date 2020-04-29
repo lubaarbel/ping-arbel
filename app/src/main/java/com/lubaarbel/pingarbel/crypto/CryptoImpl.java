@@ -28,11 +28,11 @@ public class CryptoImpl implements ICrypto, ISign {
     }
 
     @Override
-    public byte[] decrypt(byte[] data, PrivateKey privateKey) throws NoSuchPaddingException,
+    public byte[] decrypt(byte[] data, byte[] privateKey) throws NoSuchPaddingException,
             NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
 
         Cipher cipher = Cipher.getInstance(RSAUtils.TRASFORMATION_RSA_ECB_PKCS1Padding);
-        cipher.init(Cipher.DECRYPT_MODE, RSAUtils.getPrivateKey(privateKey.getEncoded()));
+        cipher.init(Cipher.DECRYPT_MODE, RSAUtils.getPrivateKey(privateKey));
         return cipher.doFinal(data);
     }
 
@@ -43,16 +43,16 @@ public class CryptoImpl implements ICrypto, ISign {
         Signature signature = Signature.getInstance(RSAUtils.ALGORITHM_SHA256_RSA);
         signature.initSign(privateKey);
         signature.update(data);
-
         return signature.sign();
     }
 
     @Override
-    public boolean verify(byte[] data, byte[] signature, PublicKey publicKey) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
-        Signature publicSignature = Signature.getInstance("SHA256withRSA");
+    public boolean verify(byte[] data, byte[] signature, PublicKey publicKey) throws NoSuchAlgorithmException,
+            InvalidKeyException, SignatureException {
+
+        Signature publicSignature = Signature.getInstance(RSAUtils.ALGORITHM_SHA256_RSA);
         publicSignature.initVerify(publicKey);
         publicSignature.update(data);
-
         return publicSignature.verify(signature);
     }
 

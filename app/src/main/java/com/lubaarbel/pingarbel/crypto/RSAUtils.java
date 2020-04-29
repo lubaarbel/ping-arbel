@@ -9,9 +9,14 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
 public class RSAUtils {
-    public static final String RSA = "RSA";
-    public static final String TRASFORMATION_RSA_ECB_PKCS1Padding = "RSA/ECB/PKCS1Padding";
-    public static final String ALGORITHM_SHA256_RSA = "SHA256withRSA";
+    static final String RSA = "RSA";
+    static final String TRASFORMATION_RSA_ECB_PKCS1Padding = "RSA/ECB/PKCS1Padding";
+    static final String ALGORITHM_SHA256_RSA = "SHA256withRSA";
+
+    public static final String ENC_PRIVATE_KEY_FILE_PATH = "/encPrivateKey.txt";
+
+    public static final String SIGN_PUBLIC_KEY_FILE_PATH = "/signPublicKey.txt";
+    public static final String SIGNATURE_FILE_PATH = "/signature.txt";
 
     public static PublicKey getPublicKey(byte[] base64PublicKey){
         try{
@@ -24,7 +29,7 @@ public class RSAUtils {
         return null;
     }
 
-    public static PrivateKey getPrivateKey(byte[] base64PrivateKey){
+    static PrivateKey getPrivateKey(byte[] base64PrivateKey){
         try {
             PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(base64PrivateKey);
             KeyFactory keyFactory = KeyFactory.getInstance(RSA);
