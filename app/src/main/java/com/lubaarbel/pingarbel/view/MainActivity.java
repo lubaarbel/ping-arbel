@@ -31,14 +31,9 @@ public class MainActivity extends AppCompatActivity {
         FirebaseMessaging.getInstance().subscribeToTopic(Utils.PUSH_NOTIFICATION_TOPIC);
 
         viewModel = new ViewModelProvider(this).get(UserInputViewModel.class);
+        viewModel.handleNotificationIfNeeded(getIntent());
 
         ensureAppPermissions();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        viewModel.handleNotificationIfNeeded(getIntent());
     }
 
     /** WRITE_EXTERNAL_STORAGE permissions **/

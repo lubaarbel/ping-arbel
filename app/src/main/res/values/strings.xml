@@ -5,6 +5,7 @@
 
     <string name="frag_user_input_edit_text">Enter your text here</string>
     <string name="frag_user_input_enter">Encrypt</string>
+    <string name="frag_user_input_state_empty">\n\nEmpty input…</string>
     <string name="frag_user_input_state_initial">Waiting for user input…</string>
     <string name="frag_user_input_state_enc">\n\nEncrypting…</string>
     <string name="frag_user_input_state_sign">\n\nSigning…\n\nReady for upload!!!\n\nJust send the app to the background…</string>

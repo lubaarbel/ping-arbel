@@ -25,7 +25,13 @@ public class UserInputFragment extends BaseFragment {
 
     private Observer<String> userInputObserver = text -> {
             dismissKeyboard();
-            viewModel.handleUserInput(text);
+            if (text.isEmpty()) {
+                String newCurrent = binding.fragUserInputUpdates.getText().toString() +
+                        getString(R.string.frag_user_input_state_empty);
+                binding.fragUserInputUpdates.setText(newCurrent);
+            } else {
+                viewModel.handleUserInput(text);
+            }
     };
 
     private Observer<Boolean> cryptoStatesSignObserver = isSigned -> {
