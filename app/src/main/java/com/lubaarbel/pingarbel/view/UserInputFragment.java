@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
 import com.lubaarbel.pingarbel.R;
 import com.lubaarbel.pingarbel.databinding.FragmentUserInputBinding;
@@ -27,9 +28,20 @@ public class UserInputFragment extends BaseFragment {
             viewModel.handleUserInput(text);
     };
 
-    public static UserInputFragment newInstance() {
-        return new UserInputFragment();
-    }
+    private Observer<Boolean> cryptoStatesSignObserver = isSigned -> {
+        if (isSigned) {
+            String newCurrent = binding.fragUserInputUpdates.getText().toString() +
+                    getString(R.string.frag_user_input_state_sign);
+            binding.fragUserInputUpdates.setText(newCurrent);
+        }
+    };
+    private Observer<Boolean> cryptoStatesEncObserver = isEncrypted -> {
+        if (isEncrypted) {
+            String newCurrent = binding.fragUserInputUpdates.getText().toString() +
+                    getString(R.string.frag_user_input_state_enc);
+            binding.fragUserInputUpdates.setText(newCurrent);
+        }
+    };
 
     @Nullable
     @Override
@@ -39,6 +51,7 @@ public class UserInputFragment extends BaseFragment {
 
         viewModel = new ViewModelProvider(getActivity()).get(UserInputViewModel.class);
 
+        binding.setViewModel(viewModel);
         binding.setUserInput(viewModel);
 
         return binding.getRoot();
@@ -49,5 +62,16 @@ public class UserInputFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
 
         viewModel.registerToObserveUserInput(getViewLifecycleOwner(), userInputObserver);
+        viewModel.registerToCryptoStatesEncryptingLd(getViewLifecycleOwner(), cryptoStatesEncObserver);
+        viewModel.registerToCryptoStatesSigningLd(getViewLifecycleOwner(), cryptoStatesSignObserver);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (viewModel.isShouldNavigateStraightToResults()) {
+            Navigation.findNavController(this.getView()).navigate(R.id.action_userInputFragment_to_userInputResultFragment);
+        }
     }
 }

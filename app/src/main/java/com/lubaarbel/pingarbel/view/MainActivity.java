@@ -1,63 +1,80 @@
 package com.lubaarbel.pingarbel.view;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.Manifest;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.lubaarbel.pingarbel.R;
-import com.lubaarbel.pingarbel.databinding.ActivityMainBinding;
-import com.lubaarbel.pingarbel.model.UserInputModel;
-import com.lubaarbel.pingarbel.navigation.CryptoFragmentFactory;
+import com.lubaarbel.pingarbel.utils.Utils;
 import com.lubaarbel.pingarbel.viewmodel.UserInputViewModel;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private ActivityMainBinding dataBinding;
     private UserInputViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        getSupportFragmentManager().setFragmentFactory(new CryptoFragmentFactory());
         super.onCreate(savedInstanceState);
-        FirebaseMessaging.getInstance().subscribeToTopic("input");
+        DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        dataBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        FirebaseMessaging.getInstance().subscribeToTopic(Utils.PUSH_NOTIFICATION_TOPIC);
+
         viewModel = new ViewModelProvider(this).get(UserInputViewModel.class);
 
-        UserInputModel.getInstance().registerToIncomingUserInputEncryptedLd(this, incomingUserInputEncryptedObserver);
+        ensureAppPermissions();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         viewModel.handleNotificationIfNeeded(getIntent());
-
-        loadUserInputFragment();
     }
 
-    private Observer<String> incomingUserInputEncryptedObserver = text -> {
-        loadUserInputResultFragment();
-    };
+    /** WRITE_EXTERNAL_STORAGE permissions **/
+    public static final int PERMISSIONS_REQUEST_CODE = 12321;
 
-    /** Fragments **/
-    private void loadUserInputFragment() {
-        commitFragment(UserInputFragment.class, false, UserInputFragment.TAG, new Bundle());
-    }
-
-    private void loadUserInputResultFragment() {
-        commitFragment(UserInputResultFragment.class, true, UserInputResultFragment.TAG, new Bundle());
-    }
-
-    private void commitFragment(@NonNull Class<? extends Fragment> fragmentClass, boolean addToBackStack, String tag, Bundle bundle) {
-        FragmentTransaction transaction = getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.main_container, fragmentClass, bundle);
-        if (addToBackStack) {
-            transaction.addToBackStack(tag);
+    private void ensureAppPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+                PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    PERMISSIONS_REQUEST_CODE);
         }
-        transaction.commit();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == PERMISSIONS_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // continue to use the app
+            } else {
+                showAlertOnLackOfPermissions();
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    private void showAlertOnLackOfPermissions() {
+        DialogInterface.OnClickListener dialogListener = (dialog, id) -> finish();
+
+        AlertDialog alert = new AlertDialog.Builder(this)
+            .setTitle(getString(R.string.permissions_alert_title))
+            .setMessage(getString(R.string.permissions_alert_message))
+            .setCancelable(false)
+            .setNeutralButton(getString(R.string.permissions_alert_bnt), dialogListener)
+            .create();
+        alert.show();
     }
 }

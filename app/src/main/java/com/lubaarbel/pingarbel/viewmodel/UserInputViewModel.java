@@ -1,29 +1,33 @@
 package com.lubaarbel.pingarbel.viewmodel;
 
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.widget.Switch;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.lubaarbel.pingarbel.AppHolder;
 import com.lubaarbel.pingarbel.R;
 import com.lubaarbel.pingarbel.action.IUserInput;
-import com.lubaarbel.pingarbel.crypto.CryptoImpl;
-import com.lubaarbel.pingarbel.crypto.RSAKeysGenerator;
-import com.lubaarbel.pingarbel.crypto.RSAUtils;
+import com.lubaarbel.pingarbel.crypto.CryptoHandler;
 import com.lubaarbel.pingarbel.model.ResultsModel;
 import com.lubaarbel.pingarbel.model.SingleLiveEvent;
 import com.lubaarbel.pingarbel.model.UserInputModel;
+import com.lubaarbel.pingarbel.utils.SettingsPrefs;
 import com.lubaarbel.pingarbel.utils.Utils;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
 import java.security.SignatureException;
-import java.util.Base64;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -32,9 +36,43 @@ import javax.crypto.NoSuchPaddingException;
 public class UserInputViewModel extends ViewModel implements IUserInput {
     private static final String TAG = UserInputViewModel.class.getSimpleName();
 
-    private CryptoImpl crypto;
+    private MutableLiveData<Boolean> cryptoStatesEncryptingLd = new MutableLiveData<>();
+    private MutableLiveData<Boolean> cryptoStatesSigningLd = new MutableLiveData<>();
+    private MutableLiveData<Boolean> cryptoStatesVerifyingLd = new MutableLiveData<>();
+    private MutableLiveData<Boolean> cryptoStatesDecryptingLd = new MutableLiveData<>();
+
     private SingleLiveEvent<String> userInput = new SingleLiveEvent<>();
     private ResultsModel resultsModel;
+
+    public void registerToObserveUserInput(LifecycleOwner owner, final Observer observer) {
+        userInput.observe(owner, observer);
+    }
+
+    public void registerToCryptoStatesEncryptingLd(@NonNull LifecycleOwner owner, @NonNull Observer observer) {
+        cryptoStatesEncryptingLd.observe(owner, observer);
+    }
+
+    public void registerToCryptoStatesSigningLd(@NonNull LifecycleOwner owner, @NonNull Observer observer) {
+        cryptoStatesSigningLd.observe(owner, observer);
+    }
+
+    public void registerToCryptoStatesVerifyingLd(@NonNull LifecycleOwner owner, @NonNull Observer observer) {
+        cryptoStatesVerifyingLd.observe(owner, observer);
+    }
+
+    public void registerToCryptoStatesDecryptingLd(@NonNull LifecycleOwner owner, @NonNull Observer observer) {
+        cryptoStatesDecryptingLd.observe(owner, observer);
+    }
+
+    public boolean isShouldBioAuthenticate() {
+        return SettingsPrefs.getInstance().getBooleanValueFromSharedPrefs(
+                SettingsPrefs.SHARED_PREFS_VALUE_SHOULD_BIO_AUTHENTICATE);
+    }
+
+    public boolean isShouldNavigateStraightToResults() {
+        String input = UserInputModel.getInstance().getIncomingUserInputEncryptedLd();
+        return input != null && !input.isEmpty();
+    }
 
     public ResultsModel getResultsModel() {
         return resultsModel;
@@ -42,20 +80,17 @@ public class UserInputViewModel extends ViewModel implements IUserInput {
 
     public void initAndSaveResultsModel() {
         String initialValue = AppHolder.getContext().getString(R.string.frag_user_input_result_text_initial);
-        resultsModel = new ResultsModel(initialValue, false, View.VISIBLE);
+        resultsModel = new ResultsModel(initialValue,
+                isShouldBioAuthenticate() ? View.VISIBLE : View.GONE);
     }
-//
-//    public int getReAuthBtnVisibility() {
-//        return resultsModel.isAuthenticated() ? View.GONE : View.VISIBLE;
-//    }
 
     public void handleNotificationIfNeeded(Intent intent) {
         if (intent != null &&
-                "OPEN_ACTIVITY_1".equals(intent.getAction()) &&
+                Utils.PUSH_NOTIFICATION_INTENT_ACTION.equals(intent.getAction()) &&
                 intent.getExtras() != null) {
 
-            String dataToDecipher = (String) intent.getExtras().get("userInput");
-            UserInputModel.getInstance().postIncomingUserInputEncryptedLd(dataToDecipher);
+            String dataToDecipher = (String) intent.getExtras().get(Utils.PUSH_NOTIFICATION_INTENT_DATA_KEY);
+            UserInputModel.getInstance().setIncomingUserInputEncryptedLd(dataToDecipher);
         }
     }
 
@@ -64,98 +99,60 @@ public class UserInputViewModel extends ViewModel implements IUserInput {
         userInput.setValue(text);
     }
 
-    public void registerToObserveUserInput(LifecycleOwner owner, final Observer observer) {
-        userInput.observe(owner, observer);
+    @Override
+    public void onRadioButtonClicked(View view) {
+        SettingsPrefs.getInstance().putBooleanValueToSharedPrefs(
+                SettingsPrefs.SHARED_PREFS_VALUE_SHOULD_BIO_AUTHENTICATE, ((Switch) view).isChecked());
     }
 
-    public void handleUserInput(String text) {
+    /** Crypto staff **/
+    // worker thread
+    public void handleUserInput(String text) { // way out
+        Log.i(TAG, "Encrypt UserInput on thread:: " + Thread.currentThread().getName());
         UserInputModel.getInstance().postUserInputLd(text);
-        crypto = new CryptoImpl();
 
-        try {
-            String encStr = encryptUserInput(text);
-            signEncryptedUserInput(encStr);
-            UserInputModel.getInstance().serUserInputEncrypted(encStr);
-        } catch (NoSuchAlgorithmException | IllegalBlockSizeException | InvalidKeyException |
-                BadPaddingException | NoSuchPaddingException | SignatureException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void handleEncryptedDataFromNotification() {
-        String text = UserInputModel.getInstance().getIncomingUserInputEncryptedLd();
-        crypto = new CryptoImpl();
-        try {
-            if (verify(text)) {
-                String output = decryptUserInput(text);
-                resultsModel.setResultViewText(output);
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            Log.i(TAG, "Encrypt UserInput on thread:: " + Thread.currentThread().getName());
+            CryptoHandler cryptoHandler = new CryptoHandler();
+            try {
+                String encStr = cryptoHandler.encryptUserInput(text);
+                new Handler(Looper.getMainLooper()).post(() ->
+                        cryptoStatesEncryptingLd.postValue(true)); // update ui
+                cryptoHandler.signEncryptedUserInput(encStr);
+                new Handler(Looper.getMainLooper()).post(() ->
+                        cryptoStatesSigningLd.postValue(true)); // update ui
+                UserInputModel.getInstance().setUserInputEncrypted(encStr);
+            } catch (NoSuchAlgorithmException | IllegalBlockSizeException | InvalidKeyException |
+                    BadPaddingException | NoSuchPaddingException | SignatureException e) {
+                e.printStackTrace();
             }
-        } catch (IllegalBlockSizeException | InvalidKeyException | BadPaddingException |
-                NoSuchAlgorithmException | NoSuchPaddingException | SignatureException e) {
-            e.printStackTrace();
-        }
+        });
     }
 
-    private String encryptUserInput(String text) throws
-            NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException,
-            BadPaddingException, NoSuchPaddingException {
+    public void handleEncryptedDataFromNotification() { // return
+        Log.i(TAG, "Decrypt UserInput on thread:: " + Thread.currentThread().getName());
 
-        RSAKeysGenerator encKeys = new RSAKeysGenerator(); // first pair
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            Log.i(TAG, "Decrypt UserInput on thread:: " + Thread.currentThread().getName());
+            String text = UserInputModel.getInstance().getIncomingUserInputEncryptedLd();
+            CryptoHandler cryptoHandler = new CryptoHandler();
 
-        Log.i(TAG, "user input:: " + text);
-        byte[] enc = crypto.encrypt(text.getBytes(), encKeys.getPublicKey());
-        String encStr = Base64.getEncoder().encodeToString(enc);
-        Log.i(TAG, "Encrypted::  " + encStr);
-
-
-        Utils.writeToFile(getFullPath(RSAUtils.ENC_PRIVATE_KEY_FILE_PATH), encKeys.getPrivateKey().getEncoded());
-        return encStr;
+            try {
+                if (cryptoHandler.verify(text)) {
+                    new Handler(Looper.getMainLooper()).post(() ->
+                            cryptoStatesVerifyingLd.postValue(true)); // update ui
+                    String output = cryptoHandler.decryptUserInput(text);
+                    new Handler(Looper.getMainLooper()).post(() ->
+                            cryptoStatesDecryptingLd.postValue(true)); // update ui
+                    resultsModel.setResultViewText(output);
+                    UserInputModel.getInstance().postIncomingUserInputEncryptedLd(null);
+                }
+            } catch (NoSuchAlgorithmException | IllegalBlockSizeException | InvalidKeyException |
+                    BadPaddingException | NoSuchPaddingException | SignatureException e) {
+                e.printStackTrace();
+            }
+        });
     }
-
-    private String getFullPath(String relativePath) {
-        String filePath = AppHolder.getContext().getFilesDir().getPath() + relativePath;
-        return filePath;
-    }
-
-    private String decryptUserInput(String encStr) throws
-            IllegalBlockSizeException, InvalidKeyException, BadPaddingException,
-            NoSuchAlgorithmException, NoSuchPaddingException {
-
-        byte[] privateKey = Utils.readFromFile(getFullPath(RSAUtils.ENC_PRIVATE_KEY_FILE_PATH));
-        byte[] dec = crypto.decrypt(Base64.getDecoder().decode(encStr), privateKey);
-        String result = new String(dec);
-        Log.i(TAG, "Decrypted::  " + result);
-
-        return result;
-    }
-
-    private void signEncryptedUserInput(String encText) throws
-            NoSuchAlgorithmException, SignatureException, InvalidKeyException {
-
-        RSAKeysGenerator signKeys = new RSAKeysGenerator(); // second pair
-        byte[] signature = crypto.sign(Base64.getDecoder().decode(encText), signKeys.getPrivateKey());
-
-        Utils.writeToFile(getFullPath(RSAUtils.SIGNATURE_FILE_PATH), signature);
-        Utils.writeToFile(getFullPath(RSAUtils.SIGN_PUBLIC_KEY_FILE_PATH), signKeys.getPublicKey().getEncoded());
-    }
-
-    private boolean verify(String encStr) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
-        byte[] signature = Utils.readFromFile(getFullPath(RSAUtils.SIGNATURE_FILE_PATH));
-        byte[] encKey = Utils.readFromFile(getFullPath(RSAUtils.SIGN_PUBLIC_KEY_FILE_PATH));
-        PublicKey publicKey = RSAUtils.getPublicKey(encKey);
-
-        return crypto.verify(Base64.getDecoder().decode(encStr), signature, publicKey);
-    }
-
-//    private void testSignature() throws NoSuchAlgorithmException, SignatureException, InvalidKeyException {
-//        RSAKeysGenerator pair = new RSAKeysGenerator();
-//        CryptoImpl crypto = new CryptoImpl();
-//
-//        Log.i(TAG, "Test signature for:: hello");
-//        byte[] signature = crypto.sign(Base64.getDecoder().decode("hello"), pair.getPrivateKey());
-//
-//        boolean isCorrect = crypto.verify(Base64.getDecoder().decode("hello"), signature, pair.getPublicKey());
-//        Log.i(TAG, "Signature  correct:: " + isCorrect);
-//    }
-
 }

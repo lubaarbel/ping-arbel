@@ -5,4 +5,6 @@ import android.view.View;
 
 public interface IUserInput {
     void onUserEnteredInput(View view, String text);
+
+    void onRadioButtonClicked(View view);
 }

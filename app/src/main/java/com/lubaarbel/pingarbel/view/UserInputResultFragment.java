@@ -12,13 +12,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.biometric.BiometricPrompt;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.lubaarbel.pingarbel.R;
 import com.lubaarbel.pingarbel.action.IUserInputResult;
 import com.lubaarbel.pingarbel.biometrics.AppBiometricsManager;
 import com.lubaarbel.pingarbel.databinding.FragmentUserInputResultBinding;
-import com.lubaarbel.pingarbel.model.ResultsModel;
 import com.lubaarbel.pingarbel.viewmodel.UserInputViewModel;
 
 public class UserInputResultFragment extends BaseFragment implements IUserInputResult {
@@ -30,9 +30,21 @@ public class UserInputResultFragment extends BaseFragment implements IUserInputR
     private BiometricPrompt.PromptInfo promptInfo;
     private AppBiometricsManager biometricsManager;
 
-    public static UserInputResultFragment newInstance() {
-        return new UserInputResultFragment();
-    }
+    private Observer<Boolean> cryptoStatesVerifyObserver = isEncrypted -> {
+        if (isEncrypted) {
+            String newCurrent = binding.fragUserInputResultUpdates.getText().toString() +
+                    getString(R.string.frag_user_input_result_state_verify);
+            binding.fragUserInputResultUpdates.setText(newCurrent);
+        }
+    };
+    private Observer<Boolean> cryptoStatesDecObserver = isEncrypted -> {
+        if (isEncrypted) {
+            String newCurrent = binding.fragUserInputResultUpdates.getText().toString() +
+                    getString(R.string.frag_user_input_result_state_dec) +
+                    getString(R.string.frag_user_input_result_state_result);
+            binding.fragUserInputResultUpdates.setText(newCurrent);
+        }
+    };
 
     @Nullable
     @Override
@@ -44,8 +56,6 @@ public class UserInputResultFragment extends BaseFragment implements IUserInputR
         viewModel = new ViewModelProvider(getActivity()).get(UserInputViewModel.class);
         viewModel.initAndSaveResultsModel();
 
-        biometricsManager = AppBiometricsManager.getInstance();
-
         binding.setModel(viewModel.getResultsModel());
         binding.setAction(this);
 
@@ -55,6 +65,11 @@ public class UserInputResultFragment extends BaseFragment implements IUserInputR
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        viewModel.registerToCryptoStatesVerifyingLd(getViewLifecycleOwner(), cryptoStatesVerifyObserver);
+        viewModel.registerToCryptoStatesDecryptingLd(getViewLifecycleOwner(), cryptoStatesDecObserver);
+
+        biometricsManager = AppBiometricsManager.getInstance();
 
         biometricPrompt = biometricsManager.getBiometricsPrompt(this, bioCallback);
         promptInfo = biometricsManager.getBiometricsPromptInfo();
@@ -67,11 +82,10 @@ public class UserInputResultFragment extends BaseFragment implements IUserInputR
     @Override
     public void onResume() {
         super.onResume();
-        if (biometricsManager.canAuthenticate()) {
-            // fragment transaction of current Fragment haven't finished by the time biometricPrompt fragment committed
-            new Handler().postDelayed(() -> launchBiometricAuthenticationWindow(), 500);
+        if (biometricsManager.canAuthenticate() && viewModel.isShouldBioAuthenticate()) {
+            launchBiometricAuthenticationWindow();
         } else {
-            // notify user for alternative authentication
+            decipherDataPayloadFromPush();
         }
     }
 

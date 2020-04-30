@@ -4,15 +4,14 @@ import android.view.View;
 
 import androidx.databinding.BaseObservable;
 
+/** Second fragment model **/
 public class ResultsModel extends BaseObservable {
 
     private String resultViewTextId;
-    private boolean isAuthenticated;
     private int authBtnVisibility;
 
-    public ResultsModel(String resultViewTextId, boolean isAuthenticated, int visibility) {
+    public ResultsModel(String resultViewTextId, int visibility) {
         this.resultViewTextId = resultViewTextId;
-        this.isAuthenticated = isAuthenticated;
         this.authBtnVisibility = visibility;
     }
 
@@ -29,12 +28,7 @@ public class ResultsModel extends BaseObservable {
         return authBtnVisibility;
     }
 
-    public boolean isAuthenticated() {
-        return isAuthenticated;
-    }
-
     public void setAuthenticated(boolean authenticated) {
-        isAuthenticated = authenticated;
         authBtnVisibility = View.GONE;
         notifyChange();
     }

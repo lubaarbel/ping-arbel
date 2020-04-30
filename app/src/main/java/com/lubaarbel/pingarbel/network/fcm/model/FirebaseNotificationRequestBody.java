@@ -3,8 +3,8 @@ package com.lubaarbel.pingarbel.network.fcm.model;
 public class FirebaseNotificationRequestBody {
     private Notification notification;
     private Data data;
-    private String to; // /topics/input
-    private String priority; // high
+    private String to;
+    private String priority;
 
     public FirebaseNotificationRequestBody(Notification notification,
                                            Data data,

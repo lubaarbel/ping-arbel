@@ -1,7 +1,6 @@
 package com.lubaarbel.pingarbel.crypto;
 
 import java.security.GeneralSecurityException;
-import java.security.PrivateKey;
 import java.security.PublicKey;
 
 public interface ICrypto {

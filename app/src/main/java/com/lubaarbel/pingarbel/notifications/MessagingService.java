@@ -12,12 +12,13 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.lubaarbel.pingarbel.AppHolder;
 import com.lubaarbel.pingarbel.R;
+import com.lubaarbel.pingarbel.model.UserInputModel;
+import com.lubaarbel.pingarbel.utils.Utils;
 import com.lubaarbel.pingarbel.view.MainActivity;
 
 import java.util.Map;
 
-
-// app in foreground
+// apply when app in foreground - not a requirement - not in use in this project
 public class MessagingService extends FirebaseMessagingService {
     private static final String TAG = MessagingService.class.getSimpleName();
 
@@ -29,15 +30,15 @@ public class MessagingService extends FirebaseMessagingService {
 
         if (remoteMessage.getData().size() > 0) {
             Map<String, String> data = remoteMessage.getData();
-            String jobType = data.get("userInput");
-            // TODO - decipher on bg thread
+            String encStr = data.get(Utils.PUSH_NOTIFICATION_INTENT_DATA_KEY);
+            UserInputModel.getInstance().setIncomingUserInputEncryptedLd(encStr);
+            // continue... to UI
         }
         sendNotification(title, message);
     }
 
     @Override
     public void onDeletedMessages() {
-
     }
 
     private void sendNotification(String title,String messageBody) {

@@ -5,7 +5,23 @@
 
     <string name="frag_user_input_edit_text">Enter your text here</string>
     <string name="frag_user_input_enter">Encrypt</string>
+    <string name="frag_user_input_state_initial">Waiting for user input…</string>
+    <string name="frag_user_input_state_enc">\n\nEncrypting…</string>
+    <string name="frag_user_input_state_sign">\n\nSigning…\n\nReady for upload!!!\n\nJust send the app to the background…</string>
 
+    <string name="frag_user_input_result_state_initial">Incoming message…\n\n</string>
+    <string name="frag_user_input_result_state_verify">Verifying…\n\n</string>
+    <string name="frag_user_input_result_state_dec">Decrypting…\n\n</string>
+    <string name="frag_user_input_result_state_result">And the result is:\n\n</string>
     <string name="frag_user_input_result_re_auth">Re-authenticate</string>
     <string name="frag_user_input_result_text_initial">Nothing to show yet…</string>
+
+    <string name="push_notification_request_body_title">I come with DATA</string>
+    <string name="push_notification_request_title_title">New input available</string>
+
+    <string name="permissions_alert_title">Permissions</string>
+    <string name="permissions_alert_message">Sorry, but you don\'t have needed permissions to use the app!\n\nPlease, go to Settings > Apps and enable storage permissions.</string>
+    <string name="permissions_alert_bnt">I understand</string>
+
+    <string name="enable_biometric_id">Enable Biometric Id</string>
 </resources>

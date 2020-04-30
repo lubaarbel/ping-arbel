@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/userInputFragment">
+
+    <fragment
+        android:id="@+id/userInputFragment"
+        android:name="com.lubaarbel.pingarbel.view.UserInputFragment"
+        android:label="UserInputFragment" >
+        <action
+            android:id="@+id/action_userInputFragment_to_userInputResultFragment"
+            app:destination="@id/userInputResultFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"/>
+    </fragment>
+    <fragment
+        android:id="@+id/userInputResultFragment"
+        android:name="com.lubaarbel.pingarbel.view.UserInputResultFragment"
+        android:label="UserInputResultFragment" >
+        <action
+            android:id="@+id/action_userInputResultFragment_to_userInputFragment_pop"
+            app:popUpTo="@id/userInputFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+</navigation>

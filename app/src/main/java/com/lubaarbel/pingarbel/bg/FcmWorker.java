@@ -36,13 +36,11 @@ public class FcmWorker extends Worker {
                 new Callback<FirebaseNotificationResponse>() {
                     @Override
                     public void onResponse(Call<FirebaseNotificationResponse> call, Response<FirebaseNotificationResponse> response) {
-                        Log.i(TAG, "FirebaseNotification onResponse:: " + response.code());
-                        UserInputModel.getInstance().serUserInputEncrypted(null);
+                        UserInputModel.getInstance().setUserInputEncrypted(null);
                     }
 
                     @Override
                     public void onFailure(Call<FirebaseNotificationResponse> call, Throwable t) {
-                        Log.i(TAG, "FirebaseNotification onFailure:: " + t.getMessage());
                     }
                 }
         );
