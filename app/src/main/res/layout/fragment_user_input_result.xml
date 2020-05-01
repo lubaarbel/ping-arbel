@@ -39,11 +39,12 @@
             android:id="@+id/fragment_user_input_result_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:gravity="center"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/frag_user_input_result_updates"
             tools:text="Deciphered user input"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:textStyle="bold"
             android:text="@{model.getResultViewText()}"
             />

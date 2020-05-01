@@ -4,7 +4,6 @@ import android.util.Log;
 
 import com.lubaarbel.pingarbel.AppHolder;
 import com.lubaarbel.pingarbel.utils.Utils;
-import com.lubaarbel.pingarbel.view.MainActivity;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
