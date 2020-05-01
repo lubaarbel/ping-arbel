@@ -68,6 +68,7 @@ public class UserInputResultFragment extends BaseFragment implements IUserInputR
 
         viewModel.registerToCryptoStatesVerifyingLd(getViewLifecycleOwner(), cryptoStatesVerifyObserver);
         viewModel.registerToCryptoStatesDecryptingLd(getViewLifecycleOwner(), cryptoStatesDecObserver);
+        viewModel.setShouldNavigateStraightToResults(false);
 
         biometricsManager = AppBiometricsManager.getInstance();
 

@@ -26,6 +26,7 @@
             app:layout_constraintTop_toTopOf="parent"
             android:scrollbarAlwaysDrawVerticalTrack="true"
             android:inputType="textMultiLine"
+            android:maxLength="117"
             android:textStyle="italic"
             android:hint="@string/frag_user_input_edit_text"
             />

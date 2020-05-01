@@ -76,7 +76,7 @@ public class UserInputFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
 
-        if (viewModel.isShouldNavigateStraightToResults()) {
+        if (viewModel.isShouldNavigateStraightToResults()) { // TODO - bad navigation
             Navigation.findNavController(this.getView()).navigate(R.id.action_userInputFragment_to_userInputResultFragment);
         }
     }

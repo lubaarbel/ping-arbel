@@ -43,6 +43,7 @@ public class UserInputViewModel extends ViewModel implements IUserInput {
 
     private SingleLiveEvent<String> userInput = new SingleLiveEvent<>();
     private ResultsModel resultsModel;
+    private boolean shouldNavigateStraightToResults;
 
     public void registerToObserveUserInput(LifecycleOwner owner, final Observer observer) {
         userInput.observe(owner, observer);
@@ -69,9 +70,11 @@ public class UserInputViewModel extends ViewModel implements IUserInput {
                 SettingsPrefs.SHARED_PREFS_VALUE_SHOULD_BIO_AUTHENTICATE);
     }
 
+    public void setShouldNavigateStraightToResults(boolean value) {
+        shouldNavigateStraightToResults = value;
+    }
     public boolean isShouldNavigateStraightToResults() {
-        String input = UserInputModel.getInstance().getIncomingUserInputEncryptedLd();
-        return input != null && !input.isEmpty();
+        return shouldNavigateStraightToResults;
     }
 
     public ResultsModel getResultsModel() {
@@ -89,6 +92,7 @@ public class UserInputViewModel extends ViewModel implements IUserInput {
                 Utils.PUSH_NOTIFICATION_INTENT_ACTION.equals(intent.getAction()) &&
                 intent.getExtras() != null) {
 
+            shouldNavigateStraightToResults = true;
             String dataToDecipher = (String) intent.getExtras().get(Utils.PUSH_NOTIFICATION_INTENT_DATA_KEY);
             UserInputModel.getInstance().setIncomingUserInputEncryptedLd(dataToDecipher);
         }

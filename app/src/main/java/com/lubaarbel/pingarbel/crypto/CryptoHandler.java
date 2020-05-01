@@ -32,6 +32,7 @@ public class CryptoHandler {
         RSAKeysGenerator encKeys = new RSAKeysGenerator(); // first pair
 
         Log.i(TAG, "user input:: " + text);
+        Log.i(TAG, "user input bytes size:: " + text.getBytes().length);
         byte[] enc = crypto.encrypt(text.getBytes(), encKeys.getPublicKey());
         String encStr = Base64.getEncoder().encodeToString(enc);
         Log.i(TAG, "Encrypted::  " + encStr);
