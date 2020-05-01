@@ -18,6 +18,10 @@ import com.lubaarbel.pingarbel.R;
 import com.lubaarbel.pingarbel.utils.Utils;
 import com.lubaarbel.pingarbel.viewmodel.UserInputViewModel;
 
+/**
+ * Single Activity principle
+ * Used as nav_controller, push intend receiver and permissions handler
+ * **/
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 

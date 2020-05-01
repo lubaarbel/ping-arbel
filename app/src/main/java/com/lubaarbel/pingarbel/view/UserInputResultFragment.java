@@ -21,6 +21,7 @@ import com.lubaarbel.pingarbel.biometrics.AppBiometricsManager;
 import com.lubaarbel.pingarbel.databinding.FragmentUserInputResultBinding;
 import com.lubaarbel.pingarbel.viewmodel.UserInputViewModel;
 
+/** Second fragment **/
 public class UserInputResultFragment extends BaseFragment implements IUserInputResult {
     public static final String TAG = UserInputResultFragment.class.getSimpleName();
 

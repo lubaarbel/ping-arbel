@@ -15,15 +15,20 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
+/**
+ * Handler is an end point for encryption and decryption of value
+ * **/
 public class CryptoHandler {
     private static final String TAG = CryptoHandler.class.getSimpleName();
 
+    /* CryptoImpl class performs encrypt/decrypt/sign/verify actions */
     private CryptoImpl crypto;
 
     public CryptoHandler() {
         this.crypto = new CryptoImpl();
     }
 
+    /* encrypt action on String and save the private key for decryption */
     public String encryptUserInput(String text) throws
             NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException,
             BadPaddingException, NoSuchPaddingException {
@@ -40,10 +45,12 @@ public class CryptoHandler {
         return encStr;
     }
 
+    /* app file system */
     private String getFullPath(String relativePath) {
         return AppHolder.getContext().getFilesDir().getPath() + relativePath;
     }
 
+    /* decrypt action on String; retrieve the private key from file system */
     public String decryptUserInput(String encStr) throws
             IllegalBlockSizeException, InvalidKeyException, BadPaddingException,
             NoSuchAlgorithmException, NoSuchPaddingException {
@@ -56,6 +63,7 @@ public class CryptoHandler {
         return result;
     }
 
+    /* sign action on String and save the public key for verification */
     public void signEncryptedUserInput(String encText) throws
             NoSuchAlgorithmException, SignatureException, InvalidKeyException {
 
@@ -66,6 +74,7 @@ public class CryptoHandler {
         Utils.writeToFile(getFullPath(RSAUtils.SIGN_PUBLIC_KEY_FILE_PATH), signKeys.getPublicKey().getEncoded());
     }
 
+    /* verify push string data using signature and public key */
     public boolean verify(String encStr) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
         byte[] signature = Utils.readFromFile(getFullPath(RSAUtils.SIGNATURE_FILE_PATH));
         byte[] encKey = Utils.readFromFile(getFullPath(RSAUtils.SIGN_PUBLIC_KEY_FILE_PATH));

@@ -33,6 +33,10 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
+/**
+ * Shared ViewModel for activity and both fragments
+ * Handles business logic on the above mentioned UI classes
+ * **/
 public class UserInputViewModel extends ViewModel implements IUserInput {
     private static final String TAG = UserInputViewModel.class.getSimpleName();
 
@@ -110,7 +114,7 @@ public class UserInputViewModel extends ViewModel implements IUserInput {
     }
 
     /** Crypto staff **/
-    // worker thread
+    // Done on worker thread using Executors.newSingleThreadExecutor()
     public void handleUserInput(String text) { // way out
         Log.i(TAG, "Encrypt UserInput on thread:: " + Thread.currentThread().getName());
         UserInputModel.getInstance().postUserInputLd(text);

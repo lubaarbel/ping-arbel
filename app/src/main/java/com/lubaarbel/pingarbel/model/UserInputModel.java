@@ -8,6 +8,9 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.lubaarbel.pingarbel.AppHolder;
 
+/**
+ * Model class to save all needed states of User input - raw, encrypted and data from push
+ * **/
 public class UserInputModel {
 
     private static final String SHARED_PREFS_NAME = "userInputEncryptedSharedPrefs";

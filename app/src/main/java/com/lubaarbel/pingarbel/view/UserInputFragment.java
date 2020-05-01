@@ -16,7 +16,7 @@ import com.lubaarbel.pingarbel.R;
 import com.lubaarbel.pingarbel.databinding.FragmentUserInputBinding;
 import com.lubaarbel.pingarbel.viewmodel.UserInputViewModel;
 
-
+/** First fragment **/
 public class UserInputFragment extends BaseFragment {
     public static final String TAG = UserInputFragment.class.getSimpleName();
 
@@ -76,8 +76,10 @@ public class UserInputFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
 
-        if (viewModel.isShouldNavigateStraightToResults()) { // TODO - bad navigation
-            Navigation.findNavController(this.getView()).navigate(R.id.action_userInputFragment_to_userInputResultFragment);
+        if (viewModel.isShouldNavigateStraightToResults()) {
+            Navigation
+                    .findNavController(this.getView())
+                    .navigate(R.id.action_userInputFragment_to_userInputResultFragment);
         }
     }
 }

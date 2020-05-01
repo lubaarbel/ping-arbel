@@ -1,19 +1,12 @@
 package com.lubaarbel.pingarbel.bg;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-import com.lubaarbel.pingarbel.model.UserInputModel;
-import com.lubaarbel.pingarbel.network.fcm.FirebaseNotificationSendingService;
-import com.lubaarbel.pingarbel.network.fcm.model.FirebaseNotificationResponse;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import com.lubaarbel.pingarbel.network.Repository;
 
 public class FcmWorker extends Worker {
     public static final String TAG = FcmWorker.class.getSimpleName();
@@ -30,19 +23,6 @@ public class FcmWorker extends Worker {
     }
 
     private void sendNotificationRequestToFirebase() {
-        FirebaseNotificationSendingService sendingService = new FirebaseNotificationSendingService();
-        sendingService.sendPushNotificationWithDataViaFirebase(
-                UserInputModel.getInstance().getUserInputEncrypted(),
-                new Callback<FirebaseNotificationResponse>() {
-                    @Override
-                    public void onResponse(Call<FirebaseNotificationResponse> call, Response<FirebaseNotificationResponse> response) {
-                        UserInputModel.getInstance().setUserInputEncrypted(null);
-                    }
-
-                    @Override
-                    public void onFailure(Call<FirebaseNotificationResponse> call, Throwable t) {
-                    }
-                }
-        );
+        Repository.getInstance().scheduleDataPushNotification();
     }
 }

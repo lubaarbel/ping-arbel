@@ -6,6 +6,10 @@ import android.view.inputmethod.InputMethodManager;
 
 import androidx.fragment.app.Fragment;
 
+/**
+ * BaseFragment should be applied to provide common visibility and actions to all app fragments
+ * Here I added a func to dismiss keyboard.
+ * **/
 public abstract class BaseFragment extends Fragment {
 
     public void dismissKeyboard() {

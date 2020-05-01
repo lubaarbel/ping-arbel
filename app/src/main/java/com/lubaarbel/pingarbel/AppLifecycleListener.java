@@ -8,6 +8,9 @@ import androidx.lifecycle.OnLifecycleEvent;
 
 import com.lubaarbel.pingarbel.bg.NotificationSender;
 
+/**
+ * Helper class of lifeCycle callback to detect when the app goes to background
+ * **/
 public class AppLifecycleListener implements LifecycleObserver {
     private static final String TAG = AppLifecycleListener.class.getSimpleName();
 

@@ -18,7 +18,11 @@ import com.lubaarbel.pingarbel.view.MainActivity;
 
 import java.util.Map;
 
-// apply when app in foreground - not a requirement - not in use in this project
+/**
+ * apply to receive push notification when app in foreground - not a requirement -
+ * not in use in this project
+ **/
+
 public class MessagingService extends FirebaseMessagingService {
     private static final String TAG = MessagingService.class.getSimpleName();
 

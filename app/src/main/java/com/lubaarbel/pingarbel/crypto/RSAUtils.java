@@ -18,6 +18,7 @@ public class RSAUtils {
     public static final String SIGN_PUBLIC_KEY_FILE_PATH = "/signPublicKey.txt";
     public static final String SIGNATURE_FILE_PATH = "/signature.txt";
 
+    // encoding of a public key
     public static PublicKey getPublicKey(byte[] base64PublicKey){
         try{
             X509EncodedKeySpec keySpec = new X509EncodedKeySpec(base64PublicKey);
@@ -29,6 +30,7 @@ public class RSAUtils {
         return null;
     }
 
+    // encoding of a private key
     static PrivateKey getPrivateKey(byte[] base64PrivateKey){
         try {
             PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(base64PrivateKey);

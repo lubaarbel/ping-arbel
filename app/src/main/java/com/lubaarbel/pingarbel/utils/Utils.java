@@ -8,6 +8,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * App general static utils funcs, like
+ * date format, filing system...
+ * **/
 public class Utils {
 
     /** app constants **/

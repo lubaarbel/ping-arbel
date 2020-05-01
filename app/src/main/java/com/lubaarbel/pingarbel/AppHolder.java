@@ -7,6 +7,9 @@ import android.content.Context;
 
 import androidx.lifecycle.ProcessLifecycleOwner;
 
+/**
+ * Application class used to create notification channel and provide app context
+ * **/
 public class AppHolder extends Application {
     public static final String CHANNEL_ID_USER_INPUT = "CHANNEL_ID_USER_INPUT";
 

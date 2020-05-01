@@ -14,6 +14,10 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
 
+/**
+ * CryptoImpl class performs encrypt/decrypt/sign/verify actions
+ * **/
+
 public class CryptoImpl implements ICrypto, ISign {
     private static final String TAG = CryptoImpl.class.getSimpleName();
 

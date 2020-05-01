@@ -16,6 +16,9 @@ import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+/**
+ * This class responsible to create POST network request using Retrofit
+ * **/
 public class FirebaseNotificationSendingService {
     private static final String TAG = FirebaseNotificationSendingService.class.getSimpleName();
 

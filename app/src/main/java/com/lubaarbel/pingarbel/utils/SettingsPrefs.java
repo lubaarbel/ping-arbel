@@ -6,6 +6,9 @@ import android.content.SharedPreferences;
 
 import com.lubaarbel.pingarbel.AppHolder;
 
+/**
+ * App Settings class used to persist user settings, like the need to bio-auth in our case
+ * **/
 public class SettingsPrefs {
 
     private static final String SHARED_PREFS_NAME = "appSettingsSharedPrefs";
