@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/userInputFragment"
         android:name="com.lubaarbel.pingarbel.view.UserInputFragment"
-        android:label="UserInputFragment" >
+        android:label="First fragment - user input" >
         <action
             android:id="@+id/action_userInputFragment_to_userInputResultFragment"
             app:destination="@id/userInputResultFragment"
@@ -18,7 +18,7 @@
     <fragment
         android:id="@+id/userInputResultFragment"
         android:name="com.lubaarbel.pingarbel.view.UserInputResultFragment"
-        android:label="UserInputResultFragment" >
+        android:label="Second fragment - result" >
         <action
             android:id="@+id/action_userInputResultFragment_to_userInputFragment_pop"
             app:popUpTo="@id/userInputFragment"

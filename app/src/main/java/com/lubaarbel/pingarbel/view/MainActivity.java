@@ -7,6 +7,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -26,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private UserInputViewModel viewModel;
+    private NavController navController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +43,23 @@ public class MainActivity extends AppCompatActivity {
         viewModel.handleNotificationIfNeeded(getIntent());
 
         ensureAppPermissions();
+
+        setupNavigation();
+    }
+
+
+    private void setupNavigation() {
+        navController = Navigation.findNavController(this, R.id.fragment);
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration
+                .Builder(navController.getGraph())
+                .setFallbackOnNavigateUpListener(() -> true).build();
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        navController.navigateUp();
+        return true;
     }
 
     /** WRITE_EXTERNAL_STORAGE permissions **/
